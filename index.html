@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" data-theme="light">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="GiftHub - Consulta pública de perfis Roblox com avatar, nome e pontuação estimada." />
-  <meta name="theme-color" content="#0f172a" />
+  <meta name="description" content="GiftHub: análise pública de perfis Roblox com visual moderno, tema claro/escuro e interface rápida." />
+  <meta name="theme-color" content="#f8fafc" />
   <meta http-equiv="Content-Security-Policy" content="
     default-src 'self';
     base-uri 'self';
@@ -13,111 +13,103 @@
     img-src 'self' data: https:;
     style-src 'self';
     script-src 'self';
-    connect-src 'self';
+    connect-src 'self' https:;
     object-src 'none';
   ">
-  <title>GiftHub | Roblox Analyzer</title>
+  <title>GiftHub | Roblox Analiser</title>
   <link rel="stylesheet" href="style.css" />
   <script src="script.js" defer></script>
 </head>
 <body>
   <header class="topbar">
     <div class="brand">
-      <div class="brand__logo" aria-hidden="true">GH</div>
+      <div class="brand__mark" aria-hidden="true">GH</div>
       <div>
         <h1>GiftHub</h1>
-        <p>Consulta pública de perfis Roblox</p>
+        <p>Analisador público de perfis Roblox</p>
       </div>
     </div>
 
-    <div class="topbar__badge" title="Projeto independente">
-      Público • Seguro • Rápido
+    <div class="topbar__actions">
+      <button type="button" class="icon-btn" id="themeBtn" aria-label="Alternar tema">
+        <span id="themeBtnText">Tema claro</span>
+      </button>
     </div>
   </header>
 
-  <main class="app">
+  <main class="container">
     <section class="hero card">
-      <div class="hero__content">
-        <span class="eyebrow">Roblox Profile Lookup</span>
-        <h2>Busque um jogador com visual moderno e resposta rápida.</h2>
+      <div class="hero__copy">
+        <span class="pill">Consulta pública</span>
+        <h2>Pesquise um jogador e veja os dados públicos com visual premium.</h2>
         <p>
-          Digite o nome de usuário para ver nome, display name, foto de perfil e uma
-          <strong>pontuação pública estimada</strong> baseada em dados públicos.
+          Busque por nome de usuário, veja avatar, nome, data da conta e uma pontuação
+          estimada com base em sinais públicos.
         </p>
       </div>
 
-      <form class="search" id="searchForm" autocomplete="off">
+      <form id="searchForm" class="search" autocomplete="off">
         <label class="sr-only" for="usernameInput">Nome de usuário Roblox</label>
         <div class="search__row">
           <input
             id="usernameInput"
-            name="username"
             type="text"
-            inputmode="text"
-            spellcheck="false"
-            maxlength="20"
             placeholder="Ex.: Builderman"
-            aria-describedby="searchHelp"
+            maxlength="20"
+            spellcheck="false"
+            inputmode="text"
           />
           <button type="submit" id="searchBtn">Pesquisar</button>
         </div>
-        <p id="searchHelp" class="search__help">
-          Use apenas letras, números e underline. Entre 3 e 20 caracteres.
-        </p>
+        <small class="hint">Use 3 a 20 caracteres: letras, números e underline.</small>
       </form>
 
-      <div class="quick-actions">
-        <button type="button" class="chip" data-sample="Builderman">Builderman</button>
-        <button type="button" class="chip" data-sample="Roblox">Roblox</button>
-        <button type="button" class="chip" data-sample="DavidBaszucki">DavidBaszucki</button>
+      <div class="quick">
+        <button class="chip" type="button" data-user="Builderman">Builderman</button>
+        <button class="chip" type="button" data-user="Roblox">Roblox</button>
+        <button class="chip" type="button" data-user="DavidBaszucki">DavidBaszucki</button>
       </div>
     </section>
 
     <section class="grid">
-      <article class="card profile-card" aria-live="polite">
-        <div class="profile-card__header">
-          <span class="section-tag">Resultado</span>
-          <span id="statusText" class="status">Aguardando pesquisa</span>
+      <article class="card result-card" aria-live="polite">
+        <div class="section-head">
+          <span class="section-head__tag">Resultado</span>
+          <span class="section-head__status" id="statusText">Aguardando pesquisa</span>
         </div>
 
-        <div id="emptyState" class="empty-state">
-          <div class="empty-state__icon" aria-hidden="true">◎</div>
+        <div id="emptyState" class="empty">
+          <div class="empty__icon" aria-hidden="true">◎</div>
           <h3>Nenhum jogador carregado</h3>
-          <p>Pesquise um usuário para ver os dados públicos aqui.</p>
+          <p>Pesquise um usuário para ver as informações públicas aqui.</p>
         </div>
 
-        <div id="profileView" class="profile-view hidden">
-          <div class="profile-view__avatar-wrap">
-            <img id="avatarImg" alt="Avatar do jogador" class="profile-view__avatar" />
-          </div>
-
-          <div class="profile-view__meta">
-            <h3 id="displayName"></h3>
-            <p id="usernameLine" class="muted"></p>
-
-            <div class="meta-actions">
-              <button type="button" class="secondary-btn" id="copyBtn">Copiar nome</button>
-              <a id="openProfileBtn" class="secondary-btn secondary-btn--link" href="#" target="_blank" rel="noreferrer">
-                Abrir perfil
-              </a>
+        <div id="profileView" class="profile hidden">
+          <img id="avatarImg" class="profile__avatar" alt="Avatar do jogador" />
+          <div class="profile__info">
+            <h3 id="displayName">—</h3>
+            <p id="usernameLine" class="muted">—</p>
+            <div class="profile__buttons">
+              <button type="button" class="btn-secondary" id="copyBtn">Copiar nome</button>
+              <a id="openProfileBtn" class="btn-secondary" href="#" target="_blank" rel="noreferrer">Abrir perfil</a>
             </div>
           </div>
 
-          <div class="stats-grid">
+          <div class="stats">
             <div class="stat">
-              <span class="stat__label">User ID</span>
+              <span>User ID</span>
               <strong id="userIdValue">—</strong>
             </div>
             <div class="stat">
-              <span class="stat__label">Conta criada em</span>
+              <span>Criada em</span>
               <strong id="createdValue">—</strong>
             </div>
             <div class="stat">
-              <span class="stat__label">Conta com</span>
+              <span>Idade da conta</span>
               <strong id="accountAgeValue">—</strong>
             </div>
             <div class="stat">
-              <span class="stat__label">Situação</span>
+              <span>Situação</span>
               <strong id="banStatusValue">—</strong>
             </div>
           </div>
@@ -125,52 +117,52 @@
       </article>
 
       <article class="card score-card">
-        <div class="profile-card__header">
-          <span class="section-tag">Pontuação</span>
-          <span class="status">Estimativa pública</span>
+        <div class="section-head">
+          <span class="section-head__tag">Pontuação</span>
+          <span class="section-head__status">Estimativa pública</span>
         </div>
 
-        <div class="score-ring" aria-label="Pontuação pública estimada">
+        <div class="score-ring" aria-label="Pontuação estimada">
           <div class="score-ring__inner">
             <strong id="scoreValue">0</strong>
             <span>de 100</span>
           </div>
         </div>
 
-        <h3 id="scoreLabel">Sem análise ainda</h3>
+        <h3 id="scoreLabel">Sem análise</h3>
         <p id="scoreDescription" class="muted">
-          A pontuação é calculada apenas com sinais públicos, sem dados privados.
+          A pontuação usa apenas sinais públicos e não é oficial do Roblox.
         </p>
 
-        <div class="score-bar">
-          <div id="scoreBarFill" class="score-bar__fill"></div>
+        <div class="bar">
+          <div id="scoreBarFill" class="bar__fill"></div>
         </div>
 
         <ul id="scoreReasons" class="reasons"></ul>
       </article>
 
-      <article class="card info-card">
-        <div class="profile-card__header">
-          <span class="section-tag">Segurança</span>
-          <span class="status status--safe">Blindado</span>
+      <article class="card safety-card">
+        <div class="section-head">
+          <span class="section-head__tag">Blindagem</span>
+          <span class="section-head__status">Ativa</span>
         </div>
 
-        <div class="info-list">
-          <div class="info-item">
+        <div class="safety-list">
+          <div class="safety-item">
             <strong>Entrada validada</strong>
-            <p>Somente usernames válidos passam para a consulta.</p>
+            <p>Somente usernames válidos passam para consulta.</p>
           </div>
-          <div class="info-item">
-            <strong>Sem XSS</strong>
-            <p>Os dados retornados são renderizados com textContent.</p>
+          <div class="safety-item">
+            <strong>Sem HTML inseguro</strong>
+            <p>Os dados são renderizados com textContent e atributos seguros.</p>
           </div>
-          <div class="info-item">
-            <strong>Cache local</strong>
-            <p>Resultados recentes são guardados por pouco tempo para acelerar.</p>
+          <div class="safety-item">
+            <strong>Sem erro feio</strong>
+            <p>Falhas aparecem como avisos amigáveis na própria interface.</p>
           </div>
-          <div class="info-item">
-            <strong>API separada</strong>
-            <p>O backend em Python pode ficar em outro servidor depois.</p>
+          <div class="safety-item">
+            <strong>Tema salvo</strong>
+            <p>A escolha de tema fica gravada no navegador.</p>
           </div>
         </div>
       </article>
@@ -178,7 +170,7 @@
 
     <section class="card footer-card">
       <p class="muted">
-        GiftHub usa apenas dados públicos do perfil. A pontuação exibida é própria e não oficial.
+        GiftHub mostra apenas dados públicos. A pontuação é própria e não oficial.
       </p>
     </section>
   </main>
