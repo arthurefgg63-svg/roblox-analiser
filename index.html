@@ -1,1 +1,186 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="GiftHub - Consulta pública de perfis Roblox com avatar, nome e pontuação estimada." />
+  <meta name="theme-color" content="#0f172a" />
+  <meta http-equiv="Content-Security-Policy" content="
+    default-src 'self';
+    base-uri 'self';
+    form-action 'self';
+    frame-ancestors 'none';
+    img-src 'self' data: https:;
+    style-src 'self';
+    script-src 'self';
+    connect-src 'self';
+    object-src 'none';
+  ">
+  <title>GiftHub | Roblox Analyzer</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand__logo" aria-hidden="true">GH</div>
+      <div>
+        <h1>GiftHub</h1>
+        <p>Consulta pública de perfis Roblox</p>
+      </div>
+    </div>
 
+    <div class="topbar__badge" title="Projeto independente">
+      Público • Seguro • Rápido
+    </div>
+  </header>
+
+  <main class="app">
+    <section class="hero card">
+      <div class="hero__content">
+        <span class="eyebrow">Roblox Profile Lookup</span>
+        <h2>Busque um jogador com visual moderno e resposta rápida.</h2>
+        <p>
+          Digite o nome de usuário para ver nome, display name, foto de perfil e uma
+          <strong>pontuação pública estimada</strong> baseada em dados públicos.
+        </p>
+      </div>
+
+      <form class="search" id="searchForm" autocomplete="off">
+        <label class="sr-only" for="usernameInput">Nome de usuário Roblox</label>
+        <div class="search__row">
+          <input
+            id="usernameInput"
+            name="username"
+            type="text"
+            inputmode="text"
+            spellcheck="false"
+            maxlength="20"
+            placeholder="Ex.: Builderman"
+            aria-describedby="searchHelp"
+          />
+          <button type="submit" id="searchBtn">Pesquisar</button>
+        </div>
+        <p id="searchHelp" class="search__help">
+          Use apenas letras, números e underline. Entre 3 e 20 caracteres.
+        </p>
+      </form>
+
+      <div class="quick-actions">
+        <button type="button" class="chip" data-sample="Builderman">Builderman</button>
+        <button type="button" class="chip" data-sample="Roblox">Roblox</button>
+        <button type="button" class="chip" data-sample="DavidBaszucki">DavidBaszucki</button>
+      </div>
+    </section>
+
+    <section class="grid">
+      <article class="card profile-card" aria-live="polite">
+        <div class="profile-card__header">
+          <span class="section-tag">Resultado</span>
+          <span id="statusText" class="status">Aguardando pesquisa</span>
+        </div>
+
+        <div id="emptyState" class="empty-state">
+          <div class="empty-state__icon" aria-hidden="true">◎</div>
+          <h3>Nenhum jogador carregado</h3>
+          <p>Pesquise um usuário para ver os dados públicos aqui.</p>
+        </div>
+
+        <div id="profileView" class="profile-view hidden">
+          <div class="profile-view__avatar-wrap">
+            <img id="avatarImg" alt="Avatar do jogador" class="profile-view__avatar" />
+          </div>
+
+          <div class="profile-view__meta">
+            <h3 id="displayName"></h3>
+            <p id="usernameLine" class="muted"></p>
+
+            <div class="meta-actions">
+              <button type="button" class="secondary-btn" id="copyBtn">Copiar nome</button>
+              <a id="openProfileBtn" class="secondary-btn secondary-btn--link" href="#" target="_blank" rel="noreferrer">
+                Abrir perfil
+              </a>
+            </div>
+          </div>
+
+          <div class="stats-grid">
+            <div class="stat">
+              <span class="stat__label">User ID</span>
+              <strong id="userIdValue">—</strong>
+            </div>
+            <div class="stat">
+              <span class="stat__label">Conta criada em</span>
+              <strong id="createdValue">—</strong>
+            </div>
+            <div class="stat">
+              <span class="stat__label">Conta com</span>
+              <strong id="accountAgeValue">—</strong>
+            </div>
+            <div class="stat">
+              <span class="stat__label">Situação</span>
+              <strong id="banStatusValue">—</strong>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="card score-card">
+        <div class="profile-card__header">
+          <span class="section-tag">Pontuação</span>
+          <span class="status">Estimativa pública</span>
+        </div>
+
+        <div class="score-ring" aria-label="Pontuação pública estimada">
+          <div class="score-ring__inner">
+            <strong id="scoreValue">0</strong>
+            <span>de 100</span>
+          </div>
+        </div>
+
+        <h3 id="scoreLabel">Sem análise ainda</h3>
+        <p id="scoreDescription" class="muted">
+          A pontuação é calculada apenas com sinais públicos, sem dados privados.
+        </p>
+
+        <div class="score-bar">
+          <div id="scoreBarFill" class="score-bar__fill"></div>
+        </div>
+
+        <ul id="scoreReasons" class="reasons"></ul>
+      </article>
+
+      <article class="card info-card">
+        <div class="profile-card__header">
+          <span class="section-tag">Segurança</span>
+          <span class="status status--safe">Blindado</span>
+        </div>
+
+        <div class="info-list">
+          <div class="info-item">
+            <strong>Entrada validada</strong>
+            <p>Somente usernames válidos passam para a consulta.</p>
+          </div>
+          <div class="info-item">
+            <strong>Sem XSS</strong>
+            <p>Os dados retornados são renderizados com textContent.</p>
+          </div>
+          <div class="info-item">
+            <strong>Cache local</strong>
+            <p>Resultados recentes são guardados por pouco tempo para acelerar.</p>
+          </div>
+          <div class="info-item">
+            <strong>API separada</strong>
+            <p>O backend em Python pode ficar em outro servidor depois.</p>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <section class="card footer-card">
+      <p class="muted">
+        GiftHub usa apenas dados públicos do perfil. A pontuação exibida é própria e não oficial.
+      </p>
+    </section>
+  </main>
+</body>
+</html>
